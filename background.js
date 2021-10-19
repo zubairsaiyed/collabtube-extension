@@ -11,7 +11,7 @@ function createWebSocketConnection() {
         if (window.location.protocol == 'https:') {
             socket_protocol = 'wss';
         }
-        var host = `${socket_protocol}://localhost:3000`;
+        var host = `${socket_protocol}://localhost:5000`;
         try {
             websocket = new WebSocket(host);
         } catch {
