@@ -1,0 +1,29 @@
+{
+    "name": "collabtube",
+    "description": "collborate on youtube player queue",
+    "version": "0.1",
+    "permissions": [
+        "storage", "tabs","<all_urls>", "notifications"
+    ],
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_icon": "icon.png"
+    },
+    "content_scripts": [
+        {
+        "matches": [
+            "http://*.youtube.com/watch*",
+            "https://*.youtube.com/watch*"
+            ],
+        "js": ["common.js", "content.js"],
+        "run_at": "document_start"
+        }
+    ], 
+    "manifest_version": 2,
+	"background": {
+		"scripts": [
+			"background.js"
+		],
+        "persistent": true
+	}
+}
