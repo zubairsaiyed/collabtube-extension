@@ -1,17 +1,14 @@
-console.log("test");
-createWebSocketConnection();
 
 var websocket;
 var sessionId = "default_session";
 var queue = [];
+// var host = 'ws://localhost:5000';
+var host = 'wss://collabtube.herokuapp.com/';
+createWebSocketConnection();
+
 function createWebSocketConnection() {
 
     if ('WebSocket' in window) {
-        var socket_protocol = 'ws';
-        if (window.location.protocol == 'https:') {
-            socket_protocol = 'wss';
-        }
-        var host = `${socket_protocol}://localhost:5000`;
         try {
             websocket = new WebSocket(host);
         } catch {
@@ -46,6 +43,7 @@ function createWebSocketConnection() {
                     video_link = msg.video_link;
                     console.log("appending video: " + video_link);
                     queue.push(video_link);
+                    updatePopUp();
                     break;
                 case "pop_video":
                     video_link = msg.video_link;
@@ -56,16 +54,16 @@ function createWebSocketConnection() {
                     } else {
                         console.log("WARNING: video " + video_link + " is not at the top of the queue");
                     }
+                    updatePopUp();
                     break;
                 case "clear_queue":
                     queue = [];
                     console.log("cleared queue");
+                    updatePopUp();
                     break;
-                case "update_queues":
-                    if (sessionId in msg.queues) {
-                        queue = msg.queues[sessionId];
-                    }
-                    console.log(queue);
+                case "update_queue":
+                    queue = msg.queue;
+                    updatePopUp();
                     break;
                 default:
                     var notificationOptions = {
@@ -100,11 +98,11 @@ chrome.runtime.onMessage.addListener(
                 var data = { "action": "set_session", "session_id": sessionId };
                 websocket.send(JSON.stringify(data));
                 console.log("set session id: " + sessionId);
+                sendResponse(JSON.stringify({ "action": "ack"}));
                 break;
-            case "refresh_queue":
-                var data = { "action": "refresh_queue", "queue": queue};
-                sendResponse(JSON.stringify(data));
-                console.log("refreshing queue: " + queue);
+            case "refresh_popup":
+                updatePopUp();
+                sendResponse(JSON.stringify({ "action": "ack"}));
                 break;
             case "clear_queue":
                 var data = { "action": "clear_queue" };
@@ -113,6 +111,7 @@ chrome.runtime.onMessage.addListener(
                 break;
             case "request_next_video":
                 requestNextVideo();
+                sendResponse(JSON.stringify({ "action": "ack"}));
                 break;
             case "pop_video":
                 var video_link = request.video_link;
@@ -121,17 +120,28 @@ chrome.runtime.onMessage.addListener(
                 sendResponse(JSON.stringify(data));
                 var data = { "action": "pop_video", "video_link": video_link };
                 websocket.send(JSON.stringify(data));
+                updatePopUp();
                 break;
             case "append_video":
                 var video_link = request.video_link;
                 console.log("append video " + video_link + " to session ");
                 var data = { "action": "append_video", "video_link": video_link };
                 websocket.send(JSON.stringify(data));
+                updatePopUp();
+                sendResponse(JSON.stringify({ "action": "ack"}));
                 break;
             default:
         }
     }
 );
+
+function updatePopUp() {
+    chrome.runtime.sendMessage({
+        msg: "update_popup", 
+        queue: queue,
+        session_id: sessionId
+    });
+}
 
 
 function requestNextVideo() {

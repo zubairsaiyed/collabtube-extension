@@ -5,12 +5,18 @@ chrome.runtime.onMessage.addListener(
                   "from the extension");
       if (request.greeting === "hello")
         sendResponse({farewell: "goodbye"});
+      if (request.msg === "update_popup") {
+        queue = request.queue;
+        console.log("updated queue: " + queue);
+        document.getElementById('queue').innerHTML = queue;
+        document.getElementById("session_header").innerHTML = request.session_id;
+      }
     }
   );
 
 document.addEventListener("DOMContentLoaded", function(event){
     document.getElementById("reloadQueue").addEventListener("click", function() {
-      reloadQueue();
+      requestUpdate();
     });
 
     document.getElementById("setSessionId").addEventListener("click", function() {
@@ -24,21 +30,20 @@ document.addEventListener("DOMContentLoaded", function(event){
         if (new_video_id.trim() == "") return;
         document.getElementById("newVideoId").value = "";
         enqueueVideo(normalizeVideoLink(new_video_id));
-        reloadQueue();
     });
     document.getElementById("nextVideo").addEventListener("click", function() {
         requestNextVideo();
-        reloadQueue();
+        requestUpdate();
     });
     document.getElementById("clearQueue").addEventListener("click", function() {
         clearQueue();
-        reloadQueue();
     });
 });
 
 function submitSessionId(session_id) {
   chrome.runtime.sendMessage({type: "set_session", sessionId: session_id}, function(response) {
     console.log("submitted session id");
+    requestUpdate();
   });
 }
 
@@ -77,16 +82,14 @@ function nextVideo() {
 //     }
 //   });
 
-function reloadQueue() {
-    chrome.runtime.sendMessage({type: "refresh_queue"}, function(response) {
-        queue = JSON.parse(response).queue;
-        console.log("updated queue: " + queue);
-        document.getElementById('queue').innerHTML = queue;
+function requestUpdate() {
+    chrome.runtime.sendMessage({type: "refresh_popup"}, function(response) {
+      console.log("requested popup update")
     });
 }
 
 window.onload = function() {
   //popup was opened, do what you want
   document.body.append(`Updated at ${new Date().toLocaleTimeString()}`);
-  reloadQueue();
+  requestUpdate();
 };
