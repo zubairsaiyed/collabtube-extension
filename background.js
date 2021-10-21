@@ -2,7 +2,6 @@
 var websocket;
 var sessionId = "default_session";
 var queue = [];
-// var host = 'ws://localhost:5000';
 var host = 'wss://collabtube.herokuapp.com/';
 createWebSocketConnection();
 
@@ -13,14 +12,8 @@ function createWebSocketConnection() {
             websocket = new WebSocket(host);
         } catch {
             console.log("failed to connect to backend, trying again in 1 sec")
-            // setTimeout(createWebSocketConnection(), 1000);
         }
         console.log("======== websocket ===========", websocket);
-
-        // websocket.onping = function() {
-        //     console.log("pingged");
-        //     heartbeat(websocket);
-        // }
 
         websocket.onopen = function () {
             // heartbeat(websocket);
@@ -165,17 +158,3 @@ function requestNextVideo() {
     websocket.send(JSON.stringify(data));
     console.log("clearing queue for session");
 }
-
-// function heartbeat(ws) {
-//     console.log("heartbeat... resetting timeout");
-//     clearTimeout(ws.pingTimeout);
-
-//     // Use `WebSocket#terminate()`, which immediately destroys the connection,
-//     // instead of `WebSocket#close()`, which waits for the close timer.
-//     // Delay should be equal to the interval at which your server
-//     // sends out pings plus a conservative assumption of the latency.
-//     ws.pingTimeout = setTimeout(() => {
-//         console.log("client side timeout");
-//         ws.close();
-//     }, 5000 + 1000);
-// }
