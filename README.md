@@ -1,10 +1,15 @@
+# Collabtube chrome extension
+Once installed, this chrome extension allows users to attach their youtube player to a "session". Then any person that visits the https://collabtube.herokuapp.com will be able to queue the videos that will be played next in that given session.
+
 ## TODO
-* Create add form field to update SESSION_ID in pop_up.html
-** Pop_up.js should pass the SESSION_ID to background.js
-* content.js should pass video id to background.js
-* background.js should pass video id from content page to websocket including the SESSION_ID (error if not set)
-* server should create a mapping of session id to list of video ids for each new session id received
-* server should support:
-** add video to session id
-** remove video from session id
-** clear session id
+* Add ability reorder queue
+* Add ability to remove item from the queue
+* save session id to local storage (and load on refresh)
+* build session id into url?
+* generate QR code for each session in the footer
+* get fullscreen working consistently
+* add ability to "(de)attach" a youtube tab to the session
+* Create settings page containing:
+** Toggle auto fullscreen
+** override websocket endpoint
+* show now playing video ?
