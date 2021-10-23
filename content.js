@@ -61,8 +61,10 @@ chrome.runtime.onMessage.addListener(
                   "from a content script:" + sender.tab.url :
                   "from the extension");
       console.log(request);
-      if (request.action === "nextVideo")
+      if (request.action === "nextVideo") {
         playNextVideo(request.video_link);
+        sendResponse(JSON.stringify({ "action": "ack"}));
+      }
     }
   );
 
