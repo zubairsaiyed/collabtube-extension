@@ -80,17 +80,8 @@ function extractVideoId(videoURL) {
     return videoURL.split("=")[1];
 }
 
-// function popVideoOnServer() {
-//     chrome.runtime.sendMessage({type: "pop_video", video_link: normalizeVideoLink(window.location.href)}, function(response) {
-//         console.log("popped video from server");
-//         video_link = JSON.parse(response).video_link;
-//         console.log('Next video is ' + video_link);
-//         playNextVideo(video_link);
-//     });
-// }
 
-
-// DRAG AND DROP
+// DRAG AND DROP VIDEOS INTO QUEUE
 
 var drag_box;
 
@@ -109,7 +100,7 @@ function queueBoxOnDrop(event) {
 }
 
 
-// FULLSCREEN
+// AUTO-FULLSCREEN
 
 document.onfullscreenchange = function(event) {
     fullscreenchange();

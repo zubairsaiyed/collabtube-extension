@@ -59,13 +59,8 @@ function createWebSocketConnection() {
                     updatePopUp();
                     break;
                 default:
-                    var notificationOptions = {
-                        type: "basic",
-                        title: msg.title,
-                        message: msg.message,
-                        iconUrl: "icon.png"
-                    }
-                    chrome.notifications.create("", notificationOptions);
+                    console.log("unrecognized web socket message")
+                    break;
             }
             console.log(queue);
         };
@@ -136,7 +131,6 @@ function updatePopUp() {
     });
 }
 
-
 function requestNextVideo() {
     if (queue.length == 0) {
         console.log("no videos remaining in queue")
@@ -158,3 +152,23 @@ function requestNextVideo() {
     websocket.send(JSON.stringify(data));
     console.log("clearing queue for session");
 }
+
+// When the extension is installed or upgraded ...
+chrome.runtime.onInstalled.addListener(function() {
+    // Replace all rules ...
+    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+      // With a new rule ...
+      chrome.declarativeContent.onPageChanged.addRules([
+        {
+          // That fires when a page's URL contains a 'g' ...
+          conditions: [
+            new chrome.declarativeContent.PageStateMatcher({
+              pageUrl: {  hostEquals: 'www.youtube.com' },
+            })
+          ],
+          // And shows the extension's page action.
+          actions: [ new chrome.declarativeContent.ShowPageAction() ]
+        }
+      ]);
+    });
+  });

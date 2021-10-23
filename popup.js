@@ -76,12 +76,6 @@ function nextVideo() {
   });
 }
 
-// chrome.storage.onChanged.addListener((changes, area) => {
-//     if (area === 'sync' && changes.queue?.newValue) {
-//         document.getElementById('queue').innerHTML = queue;
-//     }
-//   });
-
 function requestUpdate() {
     chrome.runtime.sendMessage({type: "refresh_popup"}, function(response) {
       console.log("requested popup update")
@@ -89,7 +83,6 @@ function requestUpdate() {
 }
 
 window.onload = function() {
-  //popup was opened, do what you want
   document.body.append(`Updated at ${new Date().toLocaleTimeString()}`);
   requestUpdate();
 };
