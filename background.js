@@ -1,6 +1,6 @@
 
 var websocket;
-var sessionId = "default_session";
+var sessionId = "global";
 var queue = [];
 var host = 'wss://collabtube.herokuapp.com/';
 createWebSocketConnection();
